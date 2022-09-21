@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "dot5enko",
-  "license": "LGPLv3",
+  "license": "LGPL-3.0-only",
   "dependencies": {
+    "@solana/wallet-adapter-base": "^0.9.17",
     "@solana/web3.js": "^1.62.1"
   }
 }
