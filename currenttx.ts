@@ -14,7 +14,7 @@ export interface CurrentTx {
     label: string
 }
 
-function storeCurrentTx(item: CurrentTx, wallet: WalletAdapter) {
+function storeCurrentTx(item: CurrentTx | null, wallet: WalletAdapter) {
     if (item == null) {
         cleanupCurrentTx(wallet);
     } else {

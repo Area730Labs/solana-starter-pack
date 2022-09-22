@@ -2,14 +2,21 @@
   "name": "solana-starter-pack",
   "version": "1.0.0",
   "description": "solana web3 application boilerplate",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "dot5enko",
   "license": "LGPL-3.0-only",
   "dependencies": {
+    "@project-serum/anchor": "^0.25.0",
     "@solana/wallet-adapter-base": "^0.9.17",
-    "@solana/web3.js": "^1.62.1"
+    "@solana/wallet-adapter-react": "^0.15.19",
+    "@solana/web3.js": "^1.62.1",
+    "react": "^18.2.0",
+    "react-toastify": "^9.0.8"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.20"
   }
 }

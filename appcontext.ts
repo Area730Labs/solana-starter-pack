@@ -6,13 +6,13 @@ import { TxHandler } from "./handler";
 import { CurrentTx, getCurrentTx, storeCurrentTx } from "./currenttx"
 import { createRpcWrapper, execRpcTask, QueuedRpcRequest, SolanaRpc } from "./rpc";
 import global_config from "./config";
-import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes/index";
+// import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes/index";
 import { v4 as uuidv4 } from 'uuid';
 import { useWallet } from '@solana/wallet-adapter-react';
-import Api from "../api/api";
-import { SdkProject } from "../api/api";
-import ChainSdk from "../chain/sdk";
-import { getActiveProject, setActiveProject } from "../components/projectContext";
+// import Api from "../api/api";
+// import { SdkProject } from "../api/api";
+// import ChainSdk from "../chain/sdk";
+// import { getActiveProject, setActiveProject } from "../components/projectContext";
 
 export type TransactionType = "system" | "signup" | "platform" | "other" | "create_item"
 export type SendTxFuncType = { (ixs: web3.TransactionInstruction[], typ: TransactionType, signers?: web3.Signer[], label?: string): Promise<web3.TransactionSignature> }
@@ -47,7 +47,7 @@ export interface AppContextType {
     connection: web3.Connection
 
     // app 
-    projects: SdkProject[],
+    // projects: SdkProject[],
     project_update_request: number,
 }
 
@@ -74,7 +74,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [authorized, setAuthorized] = useState<boolean>(false);//getActiveWallet() != null);
 
     const [authorizeState, setAuthorizedState] = useState<AuthorizeState>(AuthorizeState.initial);
-    const [projects, setProjects] = useState<SdkProject[]>([]);
+    // const [projects, setProjects] = useState<SdkProject[]>([]);
     const [project_update_request,setProjectUpdateRequst] = useState(0);
 
     const logout = () => {
@@ -92,7 +92,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         if (connected) {
-            setWallet(wallet.adapter);
+            // setWallet(wallet.adapter);
         }
     }, [connected]);
 
@@ -107,100 +107,64 @@ export function AppProvider({ children }: { children: ReactNode }) {
             let guid = uuidv4();
             let bytes = new TextEncoder().encode('authorize request; ' + guid + "; " + timestamp);
 
-            let walletProjects = new Api(web3.SystemProgram.programId)
-                .has_projects(connectedWallet.publicKey).then((has_projects) => {
-                    if (has_projects) {
+            // let walletProjects = new Api(web3.SystemProgram.programId)
+            //     .has_projects(connectedWallet.publicKey).then((has_projects) => {
+            //         if (has_projects) {
 
-                        signMessage(bytes).then((signed) => {
+            //             signMessage(bytes).then((signed) => {
 
-                            let sig = bs58.encode(signed);
+            //                 let sig = bs58.encode(signed);
 
-                            let request = {
-                                guid,
-                                signature: sig,
-                                wallet: publicKey.toString(),
-                                timestamp
-                            }
+            //                 let request = {
+            //                     guid,
+            //                     signature: sig,
+            //                     wallet: publicKey.toString(),
+            //                     timestamp
+            //                 }
 
-                            setAuthorized(true);
+            //                 setAuthorized(true);
 
-                            new Api()
-                                .wallet_projects(request).then((api_projects) => {
-                                    setProjects(api_projects);
+            //                 new Api()
+            //                     .wallet_projects(request).then((api_projects) => {
+            //                         setProjects(api_projects);
                                     
-                                    let curProject = getActiveProject(connectedWallet.publicKey);
-                                    if (curProject == null) {
-                                        const first_project = api_projects[0].address;
-                                        setActiveProject(new web3.PublicKey(first_project),connectedWallet.publicKey);
-                                        toast.info(`set current project to ${first_project}`)
-                                    }
-                                });
+            //                         let curProject = getActiveProject(connectedWallet.publicKey);
+            //                         if (curProject == null) {
+            //                             const first_project = api_projects[0].address;
+            //                             setActiveProject(new web3.PublicKey(first_project),connectedWallet.publicKey);
+            //                             toast.info(`set current project to ${first_project}`)
+            //                         }
+            //                     });
 
-                            setAuthorizedState(AuthorizeState.authorized);
+            //                 setAuthorizedState(AuthorizeState.authorized);
 
-                        }).catch((e) => {
-                            setAuthorizedState(AuthorizeState.rejected);
-                        });
-                    } else {
+            //             }).catch((e) => {
+            //                 setAuthorizedState(AuthorizeState.rejected);
+            //             });
+            //         } else {
 
-                        console.log('wallet has no projects');
-                        setAuthorizedState(AuthorizeState.noproject);
+            //             console.log('wallet has no projects');
+            //             setAuthorizedState(AuthorizeState.noproject);
 
-                        try {
-                            const [addr, ix] = new ChainSdk(wallet.adapter).createProject();
+            //             try {
+            //                 const [addr, ix] = new ChainSdk(wallet.adapter).createProject();
 
-                            sendTx([ix], 'signup').then(() => {
-                                setActiveProject(addr, wallet.adapter.publicKey);
-                            }).catch((e) => {
-                                toast.error('Unable to create project: ' + e.message)
-                                setAuthorizedState(AuthorizeState.rejected);
-                            });
-                        } catch (e) {
-                            console.error('unable to create signup transaction', e)
-                        }
-                    }
-                });
+            //                 sendTx([ix], 'signup').then(() => {
+            //                     setActiveProject(addr, wallet.adapter.publicKey);
+            //                 }).catch((e) => {
+            //                     toast.error('Unable to create project: ' + e.message)
+            //                     setAuthorizedState(AuthorizeState.rejected);
+            //                 });
+            //             } catch (e) {
+            //                 console.error('unable to create signup transaction', e)
+            //             }
+            //         }
+            //     });
 
         } else {
             setWallet(null);
         }
     }, [connectedWallet]);
-
-    // useEffect(() => {
-
-    //     if (connectedWallet == null) {
-
-    //         let phantomWallet = new phantom.PhantomWalletAdapter();
-
-    //         phantomWallet.on("readyStateChange", (newState) => {
-    //             console.log('newState => ', newState)
-
-    //             if (!(phantomWallet.connected || phantomWallet.connecting)) {
-    //                 phantomWallet.connect();
-    //             }
-    //         });
-
-    //         phantomWallet.on("connect", () => {
-    //             setWallet(phantomWallet);
-    //             // toast.info(<>Wallet connected</>);
-    //         });
-
-    //         phantomWallet.on("disconnect", () => {
-    //             setWallet(null);
-    //             // clean nfts in wallet too
-    //             // toast.info("wallet disconnected");
-    //         })
-
-    //         let currentWalletState = phantomWallet.readyState;
-    //         console.log('current wallet state = ', currentWalletState);
-
-    //         if (currentWalletState === WalletReadyState.Installed || currentWalletState === WalletReadyState.Loadable) {
-    //             // toast.warn('wallet installed or loadable')
-    //             phantomWallet.connect()
-    //         }
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [connectedWallet]);
 
     const rpc_wrapper: SolanaRpc = useMemo(() => {
         return createRpcWrapper({
@@ -268,7 +232,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         if (curtx != null) {
 
-            const sigConfirmPromise = new Promise((resolve, reject) => {
+            const sigConfirmPromise: Promise<TransactionType> = new Promise((resolve, reject) => {
 
                 const interval = setInterval(() => {
 
@@ -289,11 +253,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
                             if (curtx.Type === 'create_item') {
                                 clearInterval(interval);
                                 setTimeout(()  => {
-                                    resolve("confirmed")
+                                    resolve('confirmed' as TransactionType)
                                   
                                 },10000);
                             } else {
-                                resolve("confirmed")
+                                resolve("confirmed" as TransactionType)
                                 clearInterval(interval);
                             }
                         }
@@ -302,7 +266,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     console.log(`checking tx ${curtx.Signature} status...`)
                 }, 3000)
 
-            }).then((item: TransactionType) => {
+            }) as Promise<TransactionType>; 
+            
+            
+            
+            sigConfirmPromise.then((item: TransactionType) => {
 
                 const tx_type = curtx.Type;
 
@@ -357,7 +325,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
     }, [curtx]);
 
-    function setCurTxWrapper(tx: CurrentTx) {
+    function setCurTxWrapper(tx: CurrentTx | null) {
         if (connectedWallet != null) {
             storeCurrentTx(tx, connectedWallet);
             setCurtx(tx);
@@ -373,7 +341,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
     }, [connectedWallet, userUpdatesCounter]);
 
-    function sendTx(ixs: web3.TransactionInstruction[], typ: TransactionType = 'other', signers?: [], label: string = ""): Promise<web3.TransactionSignature> {
+    function sendTx(ixs: web3.TransactionInstruction[], typ: TransactionType = 'other', signers?: web3.Signer[], label: string = ""): Promise<web3.TransactionSignature> {
 
         if (curtx != null) {
             return Promise.reject(new Error("wait till current transaction is confirmed"));
@@ -423,8 +391,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
             // lang,
             // setLang,
             connection: web3Handler,
-
-            projects,
             // newProjectAddress
             project_update_request
         };
@@ -435,7 +401,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         authorized, authorizeState,logout,
         rpc_wrapper, connectedWallet,
         curtx, userUpdatesCounter,
-        projects,
         project_update_request
         // newProjectAddress
         // lang, 
