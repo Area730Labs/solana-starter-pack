@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import React from "react";
 import * as web3 from '@solana/web3.js'
 import { WalletAdapter } from "@solana/wallet-adapter-base";
 import { toast, ToastOptions, Icons } from 'react-toastify';
@@ -75,7 +76,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const [authorizeState, setAuthorizedState] = useState<AuthorizeState>(AuthorizeState.initial);
     // const [projects, setProjects] = useState<SdkProject[]>([]);
-    const [project_update_request,setProjectUpdateRequst] = useState(0);
+    const [project_update_request, setProjectUpdateRequst] = useState(0);
 
     const logout = () => {
         setAuthorized(false);
@@ -127,7 +128,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             //                 new Api()
             //                     .wallet_projects(request).then((api_projects) => {
             //                         setProjects(api_projects);
-                                    
+
             //                         let curProject = getActiveProject(connectedWallet.publicKey);
             //                         if (curProject == null) {
             //                             const first_project = api_projects[0].address;
@@ -248,16 +249,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
                     web3Handler.getSignatureStatus(curtx.Signature).then((resp) => {
                         const curtxstatus = resp.value?.confirmationStatus;
-                      
-                        if ( curtxstatus != null && curtxstatus == 'confirmed') {
+
+                        if (curtxstatus != null && curtxstatus == 'confirmed') {
                             setCurTxWrapper(null);
 
                             if (curtx.Type === 'create_item') {
                                 clearInterval(interval);
-                                setTimeout(()  => {
+                                setTimeout(() => {
                                     resolve('confirmed' as TransactionType)
-                                  
-                                },10000);
+
+                                }, 10000);
                             } else {
                                 resolve("confirmed" as TransactionType)
                                 clearInterval(interval);
@@ -268,10 +269,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     console.log(`checking tx ${curtx.Signature} status...`)
                 }, 3000)
 
-            }) as Promise<TransactionType>; 
-            
-            
-            
+            }) as Promise<TransactionType>;
+
+
+
             sigConfirmPromise.then((item: TransactionType) => {
 
                 const tx_type = curtx.Type;
@@ -349,7 +350,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             return Promise.reject(new Error("wait till current transaction is confirmed"));
         }
 
-        const txhandler = new TxHandler(web3Handler, connectedWallet);
+        const txhandler = new TxHandler(web3Handler, connectedWallet as WalletAdapter);
 
         if (global_config.debug_simulate_tx) {
             toast.warn("simulation of tx enabled. look into console for more info")
@@ -400,7 +401,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return curCtx
 
     }, [,
-        authorized, authorizeState,logout,
+        authorized, authorizeState, logout,
         rpc_wrapper, connectedWallet,
         curtx, userUpdatesCounter,
         project_update_request

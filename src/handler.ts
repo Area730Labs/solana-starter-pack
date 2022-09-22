@@ -1,7 +1,7 @@
 import { SendTransactionOptions, WalletAdapter } from "@solana/wallet-adapter-base";
 import { Connection, RpcResponseAndContext, Signer, SimulatedTransactionResponse, Transaction, TransactionBlockhashCtor, TransactionInstruction, TransactionSignature } from "@solana/web3.js";
 
-class TxHandler {
+export class TxHandler {
 
     private connection: Connection;
     private wallet: WalletAdapter;
@@ -15,10 +15,10 @@ class TxHandler {
 
         const hash = await this.connection.getLatestBlockhash();
 
-        const transactionObject = new Transaction({ 
-            blockhash: hash.blockhash, 
-            lastValidBlockHeight: hash.lastValidBlockHeight, 
-            feePayer: this.wallet.publicKey 
+        const transactionObject = new Transaction({
+            blockhash: hash.blockhash,
+            lastValidBlockHeight: hash.lastValidBlockHeight,
+            feePayer: this.wallet.publicKey
         } as TransactionBlockhashCtor);
 
         return transactionObject;
@@ -54,9 +54,4 @@ class TxHandler {
         return this.connection.simulateTransaction(tx, signers, null);
     }
 
-}
-
-
-export {
-    TxHandler
 }

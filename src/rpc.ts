@@ -90,7 +90,6 @@ export function execRpcTask(web3Handler: Connection, task : QueuedRpcRequest) : 
     }
 }
 
-
 export interface RpcWrapperContextType {
     rpcQueue: any,
     setRpcQueue(any),
