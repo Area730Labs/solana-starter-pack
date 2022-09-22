@@ -92,8 +92,8 @@ export function execRpcTask(web3Handler: Connection, task : QueuedRpcRequest) : 
 
 export interface RpcWrapperContextType {
     rpcQueue: any,
-    setRpcQueue(any),
-    setLastRpcRequestTime(number)
+    setRpcQueue(q:any),
+    setLastRpcRequestTime(arg0:number)
 }
 
 export function createRpcWrapper(args : RpcWrapperContextType): SolanaRpc {
