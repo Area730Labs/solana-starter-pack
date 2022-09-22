@@ -6,5 +6,4 @@ export * from './handler';
 export * from './pdautils';
 export * from './rpc';
 
-
-
+console.log('hola amigo')

@@ -74,4 +74,7 @@ export async function getOrConstruct<T>(force: boolean, key: string, constructor
     }
 
 
+    throw new Error('this shouldn\'t happen');
+
+
 }

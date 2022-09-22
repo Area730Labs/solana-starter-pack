@@ -53,7 +53,7 @@ export interface AppContextType {
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
 
-function sleep(ms) {
+function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -247,7 +247,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     }
 
                     web3Handler.getSignatureStatus(curtx.Signature).then((resp) => {
-                        if (resp.value.confirmationStatus == 'confirmed') {
+                        const curtxstatus = resp.value?.confirmationStatus;
+                      
+                        if ( curtxstatus != null && curtxstatus == 'confirmed') {
                             setCurTxWrapper(null);
 
                             if (curtx.Type === 'create_item') {

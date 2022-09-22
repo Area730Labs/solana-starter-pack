@@ -101,9 +101,27 @@ export function createRpcWrapper(args : RpcWrapperContextType): SolanaRpc {
 
     let {rpcQueue,setRpcQueue,setLastRpcRequestTime} = args;
 
-    return {
+    function generate_result_promise(typ: QueuedRpcRequestType, args_value: any[]): Promise<any> {
+
+        return new Promise<any>((resolve, reject) => {
+
+            rpcQueue.push({
+                type: typ,
+                args: args_value,
+                resolve: resolve,
+                reject: reject,
+            } as QueuedRpcRequest);
+
+            setRpcQueue(rpcQueue);
+            
+            setLastRpcRequestTime( moment.now());
+
+        });
+    }
+
+    const result : SolanaRpc =  {
         getAccountInfo(publicKey, commitment?) {
-            return this.generate_result_promise(QueuedRpcRequestType.get_account_info, [
+            return generate_result_promise(QueuedRpcRequestType.get_account_info, [
                 publicKey,
                 commitment
             ]);
@@ -117,7 +135,7 @@ export function createRpcWrapper(args : RpcWrapperContextType): SolanaRpc {
                 account: AccountInfo<Buffer>;
             }>
         > {
-            return this.generate_result_promise(QueuedRpcRequestType.get_program_accs, [
+            return generate_result_promise(QueuedRpcRequestType.get_program_accs, [
                 programId,
                 configOrCommitment
             ]);
@@ -134,35 +152,18 @@ export function createRpcWrapper(args : RpcWrapperContextType): SolanaRpc {
                 }>
             >
         > {
-            return this.generate_result_promise(QueuedRpcRequestType.get_parsed_token_accs, [
+            return generate_result_promise(QueuedRpcRequestType.get_parsed_token_accs, [
                 ownerAddress,
                 filter,
                 commitment
             ]);
         },
         getMinimumBalanceForRentExemptAccount(): Promise<number> {
-            return this.generate_result_promise(QueuedRpcRequestType.get_token_min_rent, [
+            return generate_result_promise(QueuedRpcRequestType.get_token_min_rent, [
 
             ]);
-        },
-        generate_result_promise(typ: QueuedRpcRequestType, args_value: any[]): Promise<any> {
-
-            return new Promise<any>((resolve, reject) => {
-
-                rpcQueue.push({
-                    type: typ,
-                    args: args_value,
-                    resolve: resolve,
-                    reject: reject,
-                } as QueuedRpcRequest);
-
-                setRpcQueue(rpcQueue);
-                
-                setLastRpcRequestTime( moment.now());
-
-            });
         }
+    };
 
-
-    } as SolanaRpc;
+    return result;
 }
